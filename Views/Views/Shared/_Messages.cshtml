@@ -1,0 +1,8 @@
+﻿@model Entities.ViewModels.BaseViewModel
+
+@if (!string.IsNullOrEmpty(@Model.Message))
+{
+    <div id="AutoHide" class="col-md-2">
+        @Model.Message
+    </div>
+}

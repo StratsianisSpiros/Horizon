@@ -1,0 +1,179 @@
+﻿@model Entities.AdminViewModels.AdminStatisticsViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Employee Statistics";
+}
+
+<div class="h1 mt-5 ml-3">@ViewBag.Title</div>
+<div class="ml-3">All employee statistics</div>
+<hr />
+<div class="row mt-2 mb-2 ml-3">
+    <div class="col-md-1">
+        @Html.ActionLink("Overview", "Index", null, new { @class = "btn" })
+    </div>
+    <div class="col-md-6 text-left">
+        @Html.ActionLink("Company", "CompanyStatistics", null, new { @class = "btn" })
+    </div>
+</div>
+<hr />
+<div class="row mt-2 mb-2 ml-3">
+    <div class="col-md-6">
+        <p class="h5 text-center mb-3 charthead">Current employee yearly attendance</p>
+        <canvas id="myChart"></canvas>
+        <div class="container mt-5">
+            Employee :
+            <select id="optUsername" class="btn">
+                @foreach (var item in Model.EmployeeNames)
+                {
+                    <option value="@item.UserName">@item.FullName</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <p class="h5 text-center mb-3 charthead">Current employee attendance</p>
+        <canvas id="myChart2" width="200" height="100"></canvas>
+        <div class="container mt-5">
+            Month :
+            <select id="optMonth" class="btn">
+                @foreach (var item in Model.Month)
+                {
+                    if (item == DateTime.Now.Month)
+                    {
+                        <option value="@item" selected>@item</option>
+                    }
+                    else
+                    {
+                        <option value="@item">@item</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+        //first employee chart
+        $(document).ready(function () {
+            var myChart;
+            var myChart2;
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var ctx2 = document.getElementById("myChart2").getContext('2d');
+            MonthPaymentChart();
+            EmployeeAttendanceChart();
+
+            function MonthPaymentChart() {
+                TotalPay = [];
+                OvertimePay = [];
+                NormalPay = [];
+                MonthNames = [];
+                username = $('#optUsername').val();
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminStatistics/EmployeeSalary?username=" + username,
+                }).done(function (data) {
+                    TotalPay = data.TotalPay;
+                    OvertimePay = data.OvertimePay;
+                    NormalPay = data.NormalPay;
+                    MonthNames = data.MonthNames;
+                    MonthNames.pop();
+
+                    myChart = new Chart(ctx,
+                        {
+                            type: 'bar',
+                            data: {
+                                labels: MonthNames,
+                                datasets: [
+                                    {
+                                        label: 'Normal Pay',
+                                        data: NormalPay,
+                                        backgroundColor: "rgba(53,193,107,0.8)"
+                                    }, {
+                                        label: 'Overtime Pay',
+                                        data: OvertimePay,
+                                        backgroundColor: "rgba(233,65,70,0.8)"
+                                    }, {
+                                        label: 'Total Pay',
+                                        data: TotalPay,
+                                        backgroundColor: "rgba(74,118,189,1)"
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                });
+            };
+
+            //First pie chart
+            function EmployeeAttendanceChart() {
+                var WorkDays;
+                var AbsentDays;
+                var Holidays;
+                var Month;
+                username = $('#optUsername').val();
+                month = $('#optMonth').val();
+
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminStatistics/EmployeeAttendance?username=" + username + '&month=' + month,
+                }).done(function (data) {
+                    WorkDays = data.WorkDays;
+                    AbsentDays = data.AbsentDays;
+                    Holidays = data.Holidays;
+                    Month = data.Month
+
+                    myChart2 = new Chart(ctx2,
+                        {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['Work Days', 'Absent Days', 'Holidays'],
+                                datasets: [
+                                    {
+                                        label: [Month],
+                                        data: [WorkDays, AbsentDays, Holidays],
+                                        backgroundColor: ['rgba(53,193,107,0.8)',
+                                            'rgba(233,65,70,0.8)',
+                                            'rgba(74,118,189,1)'],
+                                        borderColor: ['rgba(53,193,107,1)',
+                                            'rgba(233,65,70,1)',
+                                            'rgba(74,118,189,1)'],
+                                        borderWidth: [2, 2, 2]
+                                    }
+                                ]
+                            },
+                            options: {
+                                cutoutPercentage: 40,
+                                rotation: 10
+                            }
+                        });
+                });
+            };
+
+            //Change employee name
+            $("#optUsername").change(function () {
+                myChart.destroy();
+                MonthPaymentChart();
+                myChart2.destroy();
+                EmployeeAttendanceChart();
+
+            });
+
+            //Change pie chart
+            $("#optMonth").change(function () {
+                myChart2.destroy();
+                EmployeeAttendanceChart();
+            });
+        });
+    </script>
+}

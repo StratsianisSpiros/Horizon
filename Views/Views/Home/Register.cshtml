@@ -1,0 +1,76 @@
+﻿@model  Entities.ViewModels.RegisterViewModel
+@{
+    Layout = "~/Views/Shared/_Login.cshtml";
+    ViewBag.Title = "Register";
+}
+
+<div class="row p-0 m-0">
+    <div class="col-md-6 p-0">
+        <div class="box-image" style="background-image: url('../../Content/img/wood.png')">
+            <div id="infoboxregister">
+                <h1><u>Free Plan includes: </u></h1>
+                <ul class="list-unstyled">
+                    <li><i class="fa fa-user-times"></i> 5 Employee slots</li>
+                    <li><i class="fa fa-file-text"></i> Create Payslip invoices</li>
+                    <li><i class="fa fa-money"></i> Adjustable payment rates</li>
+                </ul>
+                <br />
+                <br />
+                <br />
+                <div>
+                    <h1><u> Upgrade to Pro plan: </u></h1>
+                    <ul class="list-unstyled">
+                        <li><i class="fa fa-user-plus"></i> Umlimited Employee slots</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loginbox" class="col-md-6">
+        <section id="loginForm">
+            @using (Html.BeginForm("Register", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <h4>Create a new account</h4>
+                <hr />
+                @Html.ValidationSummary("", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email, new { @class = " control-label" })
+                    <div class="input-container">
+                        <i class="fa fa-envelope icon" style="font-size: larger;"></i>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "input-field" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = " control-label" })
+                    <div class="input-container">
+                        <i class="fa fa-lock icon" style="font-size: x-large;"></i>
+                        @Html.PasswordFor(m => m.Password, new { @class = "input-field" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = " control-label" })
+                    <div class="input-container">
+                        <i class="fa fa-lock icon" style="font-size: x-large;"></i>
+                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "input-field" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CompanyName, new { @class = "control-label" })
+                    <div class="input-container">
+                        <i class="fa fa-industry" style="font-size: x-large;"></i>
+                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "input-field" })
+                    </div>
+                </div>
+            }
+        <div class="pt-3">
+                <input type="submit" class="btn pull-right" value="Register" />
+                <a href="@Url.Action("Login", "Home")" class="btn pull-left">Back</a>  
+        </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

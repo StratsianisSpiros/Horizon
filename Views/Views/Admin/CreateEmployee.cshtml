@@ -1,0 +1,88 @@
+﻿@model  Entities.AdminViewModels.EmployeeRegisterViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Create Employee";
+}
+
+<div class="container-fluid ml-5">
+    <div class="h1 mt-5 ml-5">@ViewBag.Title</div>
+    <br />
+
+    @using (Html.BeginForm("CreateEmployee", "Admin", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+
+        <div class="row mt-0 mr-5 ml-5">
+            <div class="col-md-9">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.Username, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.Username, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.Password, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.PasswordFor(m => m.Password, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.FirstName, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.FirstName, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.LastName, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.LastName, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.HireDate, new { @class = "control-label" }):</th>
+                            <th class="text-right"> @Html.EditorFor(m => m.HireDate, new { htmlattributes = new { @class = "datepicker" } }) </th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.Payrate, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.Payrate, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.OvertimeRate, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.OvertimeRate, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.TaxRate, new { @class = "control-label" }):</th>
+                            <th class="text-right">
+                                <select>
+                                    @foreach (var taxRate in Entities.UtilityModels.TaxRates.GetTaxRates())
+                                    {
+                                        <option value="@taxRate">@taxRate %</option>
+                                    }
+                                </select>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.PayMethod, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.EnumDropDownListFor(m => m.PayMethod, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.Phone, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.Phone, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                        <tr>
+                            <th class="">@Html.LabelFor(m => m.Address, new { @class = "control-label" }):</th>
+                            <th class="text-right">@Html.TextBoxFor(m => m.Address, new { @class = "form-control pull-right" })</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="AddEmplbtn" class="mt-4" title="Upload photo">
+                    <input type="submit" class="btn pull-right" value="Create" />
+                    @Html.ActionLink("return", "Index", "Admin", null, new { @class = "btn" })
+                </div>
+                @Html.HiddenFor(m => m.LoggedCompany)
+                @Html.HiddenFor(m => m.LoggedUser)
+                @Html.HiddenFor(m => m.LogoUrl)
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

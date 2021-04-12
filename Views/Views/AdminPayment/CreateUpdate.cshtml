@@ -1,0 +1,122 @@
+﻿@using System.Globalization
+@model Entities.AdminViewModels.CreatePaymentViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Payment";
+}
+
+<div class="h2 mt-5">@ViewBag.Title</div>
+<div>@Model.Employee.FullName payment for @DateTimeFormatInfo.CurrentInfo.GetMonthName(Model.Payment.Month) @Model.Payment.Year</div>
+<hr />
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 text-center text-white" style="background-color:#2e679f;border-radius:10px;">
+            <div class="float-left ml-5 mt-1">Pay Rate : @Html.DisplayFor(u => u.Employee.PayRate) / @Html.DisplayFor(u => u.Employee.PayMethod)</div>
+            <div class="float-right mr-5 mt-1"> Overtime Rate : @Html.DisplayFor(u => u.Employee.OverTimeRate)</div>
+        </div>
+    </div>
+</div>
+<div class="row mt-0 m-5">
+    <div class="col-md-5 offset-2">
+        <h3 class="h3">Current payment</h3>
+        @using (Html.BeginForm("CreateUpdate", "AdminPayment", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            <table class="table text-nowrap">
+                <tbody>
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.Month, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.Month, new { @class = "form-control" })
+                            @Html.Hidden("Month", @Model.Payment.Month)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.Year, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.Year, new { @class = "form-control" })
+                            @Html.Hidden("Year", @Model.Payment.Year)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.DaysWorked, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.DaysWorked, new { @class = "form-control" })
+                            @Html.Hidden("DaysWorked", @Model.Payment.DaysWorked)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.DaysAbsent, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.DaysAbsent, new { @class = "form-control" })
+                            @Html.Hidden("DaysAbsent", @Model.Payment.DaysAbsent)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.DaysHolidays, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.DaysHolidays, new { @class = "form-control" })
+                            @Html.Hidden("DaysHolidays", @Model.Payment.DaysHolidays)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.OverTimePay, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.OverTimePay, new { @class = "form-control" }) &euro;
+                            @Html.Hidden("OverTimePay", @Model.Payment.OverTimePay)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.NormalPay, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.NormalPay, new { @class = "form-control" }) &euro;
+                            @Html.Hidden("NormalPay", @Model.Payment.NormalPay)
+                        </th>
+                    </tr>
+                    <tr class="form-group">
+                        <th class="">
+                            @Html.LabelFor(m => m.Payment.TotalPay, new { @class = "col-md-2 control-label" }) :
+                        </th>
+                        <th class="text-right">
+                            @Html.DisplayFor(m => m.Payment.TotalPay, new { @class = "form-control" }) &euro;
+                            @Html.Hidden("TotalPay", @Model.Payment.TotalPay)
+                        </th>
+                    </tr>
+                    @Html.Hidden("paymentId", @Model.Payment.PaymentId)
+                    @Html.Hidden("UserName", @Model.Employee.UserName)
+                    @Html.Hidden("PayDate", @Model.Payment.PayDate)
+                </tbody>
+            </table>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" class="btn" value="Confirm" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<hr />
+<div>
+    @Html.ActionLink("return", "Index", "AdminPayment", new { username = Model.Employee.UserName }, new { @class = "btn m-2" })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+}

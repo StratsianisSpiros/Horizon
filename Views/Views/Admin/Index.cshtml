@@ -1,0 +1,241 @@
+﻿@model Entities.AdminViewModels.AdminIndexViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = Model.LoggedCompany;
+    int employees = Model.Employees.Count();
+}
+<div class="h1 mt-5 ml-3">@ViewBag.Title Employee tab</div>
+<div class="ml-3">Manage your company's employees and payments</div>
+<hr />
+<div class="row m-4">
+    <div class="col-md-6" id="AddEmplbtn">
+        @Html.ActionLink("Add Employee", "CreateEmployee", null, new { @class = "btn", @style = "color:white;", @title = "Add New Employee" })
+    </div>
+    <div class="col-md-6 search float-right form-group">
+
+        @using (Html.BeginForm("Index", "Admin", FormMethod.Get, new { @class = "form-inline float-right", role = "form" }))
+        {
+
+            @Html.TextBox("search", "", new { @placeholder = "Search", @class = "form-control" })
+
+            <button type="submit" class="btn" style="margin-left:-20px;"><i class="fa fa-search"></i></button>
+        }
+    </div>
+</div>
+<div class="indexTable m-4">
+    <table class="table table-borderless text-center text-nowrap">
+        <thead>
+            <tr>
+                <th class="text-center" colspan="2">Employee</th>
+                <th class="text-left">Full Name</th>
+                <th class="text-left">Phone Number</th>
+                <th class="text-left">Address</th>
+                <th class="text-right">Pay Rate</th>
+                <th class="text-right">Overtime Rate</th>
+                <th class="text-right">Tax Rate</th>
+                <th class="text-right">Hire Date</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model.Employees)
+            {
+                <tr class="m-2 text-md-center">
+                    <td><img src="@Url.Content(u.AvatarUrl ?? "~/EmployeeAvatars/Default.jpg")" width="50" height="50" alt="No image available" style="border-radius:25px;border:solid 0.1px;" /></td>
+                    <td class="text-left">@Html.DisplayFor(modelItem => u.UserName)</td>
+                    <td class="text-left">@Html.DisplayFor(modelItem => u.FullName)</td>
+                    <td class="text-left">@Html.DisplayFor(modelItem => u.PhoneNumber)</td>
+                    <td class="text-left">@Html.DisplayFor(modelItem => u.Address)</td>
+                    <td class="text-right">@Html.DisplayFor(modelItem => u.PayRate) &euro; / @Html.DisplayFor(modelItem => u.PayMethod) </td>
+                    <td class="text-right">@Html.DisplayFor(modelItem => u.OverTimeRate) &euro;</td>
+                    <td class="text-right">@Html.DisplayFor(modelItem => u.TaxRate) %</td>
+                    <td class="text-right">@Html.DisplayFor(modelItem => u.HireDate)</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle"
+                                    type="button" id="dropdownMenu1" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="dropdownbtns" style="background-color:#979fa6">
+                                <div>
+                                    <a href="@Url.Action("Index", "AdminPayment", new { username = u.UserName })" class="btn change">
+                                        <div class="arrows">
+                                            <i class="fa fa-money"></i>
+                                            <span>
+                                                <strong> Employee Payment</strong>
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("CreateEmployee", "Admin", new { username = u.UserName })" class="btn change">
+                                        <div class="arrows">
+                                            <i class="fa fa-pencil"></i>
+                                            <span>
+                                                <strong> Edit Employee</strong>
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("EmployeeChangePassword", "Admin", new { username = u.UserName })" class="btn change">
+                                        <div class="arrows">
+                                            <i class="fa fa-key"></i>
+                                            <span>
+                                                <strong> Change Password</strong>
+                                            </span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn change arrows" data-toggle="modal" data-username="@u.UserName" data-target="#employeeModalDelete"><i class="fa fa-trash" style="color:darkred;"></i> Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (employees < 6)
+            {
+                for (int i = 0; i < 6 - employees; i++)
+                {
+                    <tr>
+                        <td><img src="@Url.Content("~/EmployeeAvatars/Default.jpg")" width="50" height="50" alt="No image available" style="border-radius:25px;border:solid 0.1px;" /></td>
+                        <td colspan="12">@Html.ActionLink("Add Employee", "CreateEmployee", null, new { @class = "btn", @title = "Add New Employee" })</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @if (Model.CurrentIndex > 5)
+    {
+        <div class="float-left">
+            @Html.ActionLink("previous page", "Index", new { search = Model.Search, startIndex = Model.CurrentIndex - Model.CurrentPage }, new { @class = "btn update" })
+        </div>
+
+    }
+    @if (Model.CurrentIndex + 5 < Model.MaxIndex)
+    {
+        <div class="float-right">
+            @Html.ActionLink("next page", "Index", new { search = Model.Search, startIndex = Model.CurrentIndex + Model.CurrentPage }, new { @class = "btn update" })
+        </div>
+
+    }
+</div>
+
+
+<div id="employeeModalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="border-color: darkred;">
+            <div class="modal-header" style="width:100%;">
+                <h4 class="modal-title font-weight-bold">You are going to delete the Post!<br /> Are you sure?</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> No</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="btnSubmitDelete" type="button" style="background-color:darkred!important;" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var choice, id, username;
+        $(document).ready(function () {
+
+            $('#btnSubmit').click(function () {
+                //Validation/
+                if ($('#request').val().trim() == "") {
+                    alert('Request is empty');
+                    return;
+                }
+                if (choice == undefined) {
+                    alert('Please choose if the request is positive or negative');
+                    return;
+                }
+                var data = {
+                    RequestId: id,
+                    Username: username,
+                    AskRequest: choice,
+                    Response: $('#request').val() //response -> property of request model
+                }
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+
+            function SaveEvent(data) {
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '/AdminRequest/Submit',
+                    data: data,
+                    success: function (data) {
+                        console.log(data.status);
+                        if (data.status) {
+                            //Refresh the page
+                            location.reload();
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to save');
+                    }
+                })
+            }
+        })
+
+        $('#employeeModalChangePassword').on('show.bs.modal', function (event) {
+
+            var button1 = $(event.relatedTarget);
+            empName = button1.data('username');
+            var modal = $(this)
+        })
+    </script>
+
+
+
+    @*DeleteData*@
+    <script>
+        var empName;
+        $('#btnSubmitDelete').click(function () {
+            var data = {
+                UserName: empName,
+            }
+            DeletePost(data);
+            // call function for submit data to the server
+        });
+
+        function DeletePost(data) {
+            $.ajax({
+                type: "POST",
+                url: '/Admin/DeleteEmployee',
+                data: data,
+                success: function (data) {
+                    if (data.status) {
+                        //Refresh the page
+                        location.reload();
+                    }
+                },
+                error: function () {
+                    alert('Failed to delete');
+                }
+            })
+        }
+        $('#employeeModalDelete').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget);
+            empName = button.data('username');
+            var modal = $(this)
+        })
+    </script>
+
+
+
+
+
+
+}

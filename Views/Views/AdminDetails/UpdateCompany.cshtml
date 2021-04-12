@@ -1,0 +1,57 @@
+﻿@model Entities.AdminViewModels.CompanyUpdateViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Update Company Details";
+}
+
+<h1 class="h1 mt-5 ml-3">Edit Company Details</h1>
+<br />
+
+<div class="row mt-0 mr-5 ml-5">
+    <div class="col-md-10">
+        <h3 class="h3">Company Details</h3>
+        <table class="table text-nowrap form-group">
+            <tbody>
+                @using (Html.BeginForm("UpdateCompany", "AdminDetails", FormMethod.Post, new { @class = "form-group", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+                    <tr>
+                        <th class="">@Html.LabelFor(m => m.CompanyName, new { @class = "control-label" }) Name:</th>
+                        <th class="text-right">@Html.EditorFor(m => m.CompanyName, new { @class = "form-control" })</th>
+                    </tr>
+                    <tr>
+                        <th class="">Company @Html.LabelFor(m => m.CompanyAddress, new { @class = "control-label" }):</th>
+                        <th class="text-right">@Html.EditorFor(m => m.CompanyAddress, new { @class = "form-control" })</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.LabelFor(m => m.CompanyPhone, new { @class = "control-label" }):</th>
+                        <th class="text-right">@Html.EditorFor(m => m.CompanyPhone, new { @class = "form-control" })</th>
+                    </tr>
+
+                }
+                @using (Html.BeginForm("UploadFiles", "AdminDetails", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <tr>
+                        <th class="">Company Logo:</th>
+
+                        <th class="text-right" id="AddEmplbtn">
+                            @Html.ValidationSummary()
+                            @Html.TextBoxFor(m => m.UploadFile, new { type = "file" })
+                            <input type="submit" class="btn" value="Upload" />
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="AddEmplbtn" class="pt-5">
+            <input type="submit" class="btn  pull-right mr-2" value="Update" />
+            @Html.ActionLink("return", "Index", "AdminDetails", null, new { @class = "btn" })
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,87 @@
+﻿@model Entities.EmployeeViewModels.EmployeeIndexViewModel
+@{
+    Layout = "~/Views/Shared/_Employee.cshtml";
+    ViewBag.Title = @Model.LoggedCompany;
+}
+
+<h1 class="h1 mt-5 ml-3">Welcome @Html.DisplayFor(m => m.Employee.FirstName)</h1>
+<br />
+
+<div class="container-fluid ml-5 mt-2 mb-2">
+    <div class="row">
+        @if (Model.Today.Status == Entities.UtilityModels.WorkStatus.Work)
+        {
+            <div class="d-flex col-md-4 p-0 m-3 align-items-center" style="background-color:#00d5af;border-radius:10px;height:300px;">
+                <div style="margin-left:50px;"><p class="h4 text-center">Start</p><p class="h5">@Html.DisplayFor(m => m.Today.Start)</p></div>
+                <div style="margin-left:50px;"><p class="h4 text-center">End</p><p class="h5">@Html.DisplayFor(m => m.Today.End)</p></div>
+            </div>
+        }
+        else if (Model.Today.Status == Entities.UtilityModels.WorkStatus.Holiday)
+        {
+            <div class="d-flex col-md-4 p-0 m-3 align-items-center" style="background-color:#ea6a47;border-radius:10px;height:300px;">
+                <div class="h2" style="margin-left:50px;">You are on holiday Today!</div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex col-md-4 p-0 m-3 align-items-center" style="background-color:#477394;border-radius:10px;height:300px;">
+                <div class="h2" style="margin-left:100px">No Work Today!</div>
+            </div>
+        }
+        @if (Model.Tomorrow.Status == Entities.UtilityModels.WorkStatus.Work)
+        {
+
+            <div class="d-flex col-md-4 p-0 m-3 align-items-center" style="background-color:#00d5af;border-radius:10px;height:300px;">
+                <div style="margin-left:50px;"><p class="h4 text-center">Start</p><p class="h5">@Html.DisplayFor(m => m.Tomorrow.Start)</p></div>
+                <div style="margin-left:50px;"><p class="h4 text-center">End</p><p class="h5">@Html.DisplayFor(m => m.Tomorrow.End)</p></div>
+            </div>
+        }
+        else if (Model.Tomorrow.Status == Entities.UtilityModels.WorkStatus.Holiday)
+        {
+            <div class="d-flex col-md-4 p-0 m-3 align-items-center" style="background-color:#ea6a47;border-radius:10px;height:300px;">
+                <div class="h2" style="margin-left:50px;">You are on holiday Tomorrow!</div>
+            </div>
+        }
+        else
+        {
+
+            <div class="d-flex col-md-4 p-0 m-3 align-items-center" style="background-color:#477394;border-radius:10px;height:300px;">
+                <div class="h2" style="margin-left:80px;">No Work Tomorrow!</div>
+            </div>
+        }
+    </div>
+</div>
+
+<br />
+
+<div class="container mt-0 mr-5 ml-5">
+    <div class="col-md-8 offset-2">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Employee.PayMethod):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.Employee.PayMethod)</th>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Employee.PayRate):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.Employee.PayRate) &euro;</th>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.Employee.OverTimeRate):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.Employee.OverTimeRate) &euro;</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-md-3 offset-2 p-3" style="background-color:#7e909a;border-radius:10px;">
+            <p class="h3 text-right">Expected Salary this Month :</p>
+        </div>
+        <div class="col-md-2 p-3 ml-2" style="background-color:#7e909a;border-radius:10px;">
+            <p class="h3 text-center">@Model.TotalPay &euro;</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Login.cshtml";
+    ViewBag.Title = "Success";
+}
+
+<h2>Success</h2>
+
+<script src="~/Scripts/jquery-3.5.1.js"></script>
+
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            window.location.replace("https://localhost:44381/AdminDetails/Index");
+        }, 1000);
+    });
+</script>

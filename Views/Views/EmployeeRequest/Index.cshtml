@@ -1,0 +1,168 @@
+﻿@model Entities.ViewModels.RequestViewModel
+@{
+    Layout = "~/Views/Shared/_Employee.cshtml";
+    ViewBag.Title = "Requests";
+    int requests = Model.Requests.Count();
+}
+
+<div class="h1 mt-5 ml-3">@ViewBag.Title</div>
+<div class="ml-3">Requests for your supervisor</div>
+<hr />
+<div class="row mt-4 mb-2 ml-5">
+    <div class="col-md-4">
+        <button type="button" class="btn" data-toggle="modal" data-target="#requestModal">Create request</button>
+    </div>
+</div>
+
+<div class="container-fluid ml-3">
+    @foreach (var item in Model.Requests)
+    {
+        <div class="row">
+            <div class="col-md-4 text-center p-0 m-3" style="background-color:#979fa6;border-radius:20px;height:100px;">
+                <p class="requestColor" style="border-radius:20px 20px 0 0;color:white;">Request on @item.RequestDate.Value.ToShortDateString()</p>
+                <div class="m-2" style="color:#f1f1f1;overflow:hidden;">@item.Content</div>
+            </div>
+            <div id="arrow-right"></div>
+            <div class="col-md-4 text-center p-0 m-3" style="background-color:#979fa6;border-radius:20px;height:100px;">
+                <p class="requestColor" style="border-radius:20px 20px 0 0;color:white;">Response</p>
+                <div class="m-2" style="color:#f1f1f1;overflow:hidden;">@item.Response</div>
+            </div>
+            @if (!string.IsNullOrEmpty(item.Response) && item.AskRequest == true)
+            {
+                <div id="check"></div>
+            }
+            @if (!string.IsNullOrEmpty(item.Response) && item.AskRequest == false)
+            {
+                <div id="cross"></div>
+            }
+        </div>
+    }
+    @if (requests < 5)
+    {
+        for (int i = 0; i < 5 - requests; i++)
+        {
+            <div class="row">
+                <div class="col-md-4 text-center p-0 m-3" style="background-color:#979fa6;border-radius:20px;height:100px;">
+                    <p class="requestColor" style="border-radius:20px 20px 0 0;color:white;">Request</p>
+                </div>
+                <div id="arrow-right"></div>
+                <div class="col-md-4 text-center p-0 m-3" style="background-color:#979fa6;border-radius:20px;height:100px;">
+                    <p class="requestColor" style="border-radius:20px 20px 0 0;color:white;">Response</p>
+                </div>
+            </div>
+        }
+    }
+    <div class="col-md-8">
+        @if (Model.CurrentIndex > 4)
+        {
+            <div class="float-left">
+                @Html.ActionLink("previous page", "Index", new { startIndex = Model.CurrentIndex - Model.CurrentPage }, new { @class = "btn" })
+            </div>
+        }
+        @if (Model.CurrentIndex + 4 < Model.MaxIndex)
+        {
+            <div class="float-right">
+                @Html.ActionLink("next page", "Index", new { startIndex = Model.CurrentIndex + Model.CurrentPage }, new { @class = "btn" })
+            </div>
+        }
+    </div>
+</div>
+
+<div id="requestModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="width:100%">
+                <h4 class="modal-title font-weight-bold">New Request</h4>
+            </div>
+            <div class="modal-body p-4">
+                <form class="form-horizontal">
+                    <div class="form-group ">
+                        <textarea id="request" rows="10" class="form-control col-md-12"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                </div>
+                <div class="col-md-3 offset-6">
+                    <button id="btnSubmit" type="button" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="responseModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="width:100%">
+                <h4 class="modal-title">Save Shift</h4>
+            </div>
+            <div class="modal-body p-4">
+            </div>
+            <div class="row">
+                <div class="offset-md-10 col-md-3">
+                    <button type="button" class="btn m-2 col-md-7" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#btnSubmit').click(function () {
+                //Validation/
+                if ($('#request').val().trim() == "") {
+                    alert('Request is empty');
+                    return;
+                }
+                var data = {
+                    Content: $('#request').val() //content -> property of request model
+                }
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+
+            function SaveEvent(data) {
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '/EmployeeRequest/Submit',
+                    data: data,
+                    success: function (data) {
+                        console.log(data.status);
+                        if (data.status) {
+                            //Refresh the page
+                            location.reload();
+
+                            FetchRequestAndRender();
+                            $('#requestModal').modal('hide');
+
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to save');
+                    }
+                })
+            }
+        })
+
+        $('#requestModal').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget) 
+            var modal = $(this)
+        })
+
+        $('#responseModal').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var response = button.data('response') // Extract info from data-* attributes
+            console.log(response);
+            var modal = $(this)
+        })
+    </script>
+}

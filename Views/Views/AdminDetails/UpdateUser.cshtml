@@ -1,0 +1,42 @@
+﻿@model Entities.AdminViewModels.AdminUpdateViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Edit";
+}
+
+<h1 class="h1 mt-5 ml-3">@ViewBag.Title Personal Details</h1>
+<br />
+
+@using (Html.BeginForm("UpdateUser", "AdminDetails", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="row mt-0 mr-5 ml-5">
+        <div class="col-md-10">
+            <h3 class="h3">Personal Details</h3>
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <table class="table text-nowrap">
+                <tbody>
+                    <tr>
+                        <th class="">@Html.LabelFor(m => m.FirstName, new { @class = "control-label" }):</th>
+                        <th class="text-right">@Html.EditorFor(m => m.FirstName, new { @class = "form-control" })</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.LabelFor(m => m.LastName, new { @class = "control-label" }):</th>
+                        <th class="text-right">@Html.EditorFor(m => m.LastName, new { @class = "form-control" })</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.LabelFor(m => m.PhoneNumber, new { @class = "control-label" }):</th>
+                        <th class="text-right">@Html.EditorFor(m => m.PhoneNumber, new { @class = "form-control" })</th>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="AddEmplbtn" class="pt-5">
+                <input type="submit" class="btn  pull-right" value="Update" />
+                @Html.ActionLink("return", "Index", "AdminDetails", null, new { @class = "btn" })
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

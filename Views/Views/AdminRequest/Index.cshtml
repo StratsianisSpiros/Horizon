@@ -1,0 +1,226 @@
+﻿@model Entities.ViewModels.RequestViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Requests";
+    int requests = Model.Requests.Count();
+}
+
+<h2 class="h1 mt-5 ml-3">@ViewBag.Title</h2>
+<div class="ml-3">Manage, reply to your employees requests</div>
+<hr />
+
+<div class="container-fluid m-4">
+    @foreach (var item in Model.Requests)
+    {
+    <div class="row m-2 text-center grayColor" style="min-height:20%;border-radius:10px;">
+        <div class="col-md-5 p-0">
+            <p class="requestColor" style="border-radius:10px 0 0 0;">@item.Username request on @item.RequestDate.Value.ToString("MMMM dd, yyyy")</p>
+            <p class="m-2" style="overflow:hidden;">@item.Content</p>
+        </div>
+        <div class="col-md-5 p-0">
+            <p class="requestColor">Reply</p>
+            <p class="m-2" style="overflow:hidden;">@item.Response</p>
+        </div>
+        <div class="col-md-2 p-0">
+            <p class="requestColor" style="border-radius:0 10px 0 0;">Action</p>
+
+            @if (string.IsNullOrEmpty(item.Response))
+            {
+                <button type="button" class="btn mt-2 mb-2" data-toggle="modal" data-target="#requestModal" data-id="@item.RequestId" data-username="@item.Username" data-request="@item.Content">Open the request</button>
+            }
+            else
+            {
+                <button type="button" class="btn mt-2 mb-2" data-toggle="modal" data-target="#viewModal" data-ask="@item.AskRequest" data-response="@item.Response" data-username="@item.Username" data-request="@item.Content">Open the request</button>
+            }
+        </div>
+    </div>
+    }
+    @if (requests < 7)
+    {
+        for (int i = 0; i < 7 - requests; i++)
+        {
+            <div class="row m-2 text-center grayColor" style="border-radius:10px;">
+                <div class="col-md-6 p-0">
+                    <p  class="requestColor" style="border-radius:10px 0 0 0;">No request</p>
+                    <p class="mt-2">No content</p>
+                </div>
+                <div class="col-md-6 p-0">
+                    <p  class="requestColor" style="border-radius:0 10px 0 0;">Reply</p>
+                    <p class="mt-3 mb-3">No content</p>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="col-md-10 offset-1">
+    @if (Model.CurrentIndex > 6)
+    {
+        <div class="float-left">
+            @Html.ActionLink("previous page", "Index", new { startIndex = Model.CurrentIndex - Model.CurrentPage }, new { @class = "btn" })
+        </div>
+    }
+    @if (Model.CurrentIndex + 6 < Model.MaxIndex)
+    {
+        <div class="float-right">
+            @Html.ActionLink("next page", "Index", new { startIndex = Model.CurrentIndex + Model.CurrentPage }, new { @class = "btn" })
+        </div>
+    }
+</div>
+
+<div id="requestModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-m">
+        <div class="modal-content">
+            <div class="modal-header" style="width:100%">
+                <h4 id="title" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="body" class="form-horizontal p-2 view">
+                </div>
+                <div class="pt-3 pb-3" id="choose">
+                    Response:
+                    <input type="radio" id="positive" name="choose">
+                    <label for="positive">Positive</label>
+                    <input type="radio" id="negative" name="choose">
+                    <label for="negative">Negative</label>
+                </div>
+                <div class="form-group ">
+                    <textarea id="request" rows="10" class="form-control col-md-12"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="btnSubmit" type="button" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="viewModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-m">
+        <div class="modal-content">
+            <div class="modal-header" style="width:100%">
+                <h4 id="titleview" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="contentview" class="form-horizontal p-2 view">
+                </div>
+                <div class="pt-3 pb-3" id="choose">
+                    Response:
+                    <input type="radio" id="positiveView" name="choose">
+                    <label for="positiveView">Positive</label>
+                    <input type="radio" id="negativeView" name="choose">
+                    <label for="negativeView">Negative</label>
+                </div>
+                <div id="responseview" class="form-horizontal p-2 view">
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-md-6 col-md-6">
+                    <button type="button" class="btn m-3 col-md-6 float-right" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        var choice, id, username;
+        $(document).ready(function () {
+
+            $('#btnSubmit').click(function () {
+                //Validation/
+                if ($('#request').val().trim() == "") {
+                    alert('Request is empty');
+                    return;
+                }
+                if (choice == undefined) {
+                    alert('Please choose if the request is positive or negative');
+                    return;
+                }
+                var data = {
+                    RequestId: id,
+                    Username: username,
+                    AskRequest: choice,
+                    Response: $('#request').val() //response -> property of request model
+                }
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+
+            function SaveEvent(data) {
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '/AdminRequest/Submit',
+                    data: data,
+                    success: function (data) {
+                        console.log(data.status);
+                        if (data.status) {
+                            //Refresh the page
+                            location.reload();
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to save');
+                    }
+                })
+            }
+        })
+
+        $('#requestModal').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            id = button.data('id');
+            username = button.data('username');
+            var request = button.data('request'); // Extract info from data-* attributes
+            $('#body').text(request);
+            $('#title').text("Request from " + username);
+            var modal = $(this);
+        })
+
+        $('#positive').click(function () {
+            choice = true;
+            $("#request").css({ "-moz-box-shadow": "0px 8px 15px 0px rgba(142 ,190, 107, 1.8)", "-webkit-box-shadow": "0px 8px 15px 0px rgba(142 ,190, 107, 1.8)", "box-shadow": "0px 8px 15px 0px rgba(142 ,190, 107, 1.8)" });
+        });
+
+        $('#negative').click(function () {
+            choice = false;
+            console.log(choice);
+            $("#request").css({ "-moz-box-shadow": "0px 8px 15px 0px rgba(221, 0, 0, 1.8)", "-webkit-box-shadow": "0px 8px 15px 0px rgba(221, 0, 0, 1.8)", "box-shadow": "0px 8px 15px 0px rgba(221, 0, 0, 1.8)" });
+        });
+
+
+        $('#viewModal').on('show.bs.modal', function (event) {
+
+            var button2 = $(event.relatedTarget); // Button that triggered the modal
+            username = button2.data('username');
+            choice = button2.data('ask');
+            console.log(choice);
+            response = button2.data('response');
+            content = button2.data('request'); // Extract info from data-* attributes
+            $('#titleview').text("Request from " + username);
+            $('#contentview').text(content);
+            $('#responseview').text(response);
+
+            if (choice=="True") {
+                $("#responseview").css({ "-moz-box-shadow": "0px 8px 15px 0px rgba(82, 140, 39, 1.8)", "-webkit-box-shadow": "0px 8px 15px 0px rgba(82, 140, 39,, 1.8)", "box-shadow": "0px 8px 15px 0px rgba(82, 140, 39, 1.8)" });
+                $("input#positiveView").prop("checked", true);
+            }
+            else {
+                $("#responseview").css({ "-moz-box-shadow": "0px 8px 15px 0px rgba(221, 0, 0, 1.8)", "-webkit-box-shadow": "0px 8px 15px 0px rgba(221, 0, 0, 1.8)", "box-shadow": "0px 8px 15px 0px rgba(221, 0, 0, 1.8)" });
+                $("input#negativeView").prop("checked", true);
+            }
+
+            var modal = $(this);
+        })
+    </script>
+}

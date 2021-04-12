@@ -1,0 +1,113 @@
+﻿@using System.Globalization
+@model Entities.EmployeeViewModels.EmloyeePaymentsViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Manage Payments";
+}
+
+<div class="h2 mt-4">@ViewBag.Title</div>
+
+<div class="row ml-3">
+    <div class="h5 mt-2">Employee @Model.Employee.FullName payments for year @Model.PaymentsYear</div>
+    @if (Model.Year.Count() > 1)
+    {
+        using (Html.BeginForm("Index", "AdminPayment", FormMethod.Get, new { @class = "form-inline float-right" }))
+        {
+            @Html.Hidden("username", Model.Employee.UserName)
+            @Html.DropDownListFor(m => m.PaymentsYear, new SelectList(Model.Year), new { @id = "btnUpdate", @class = "btn ml-3", @style = "height:40px;" })
+        }
+    }
+</div>
+
+<hr />
+<div class="indexTable m-3">
+    <table class="table table-borderless text-center text-nowrap">
+        <thead>
+            <tr>
+                <th>
+                    Month
+                </th>
+                <th>
+                    Work
+                </th>
+                <th>
+                    Absent
+                </th>
+                <th>
+                    Holiday
+                </th>
+                <th>
+                    Normal Pay
+                </th>
+                <th>
+                    Overtime
+                </th>
+                <th>
+                    Total Pay
+                </th>
+                <th>
+                    Tax Rate
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i < 13; i++)
+            {
+                if (!string.IsNullOrEmpty(Model.Payments[i].Username))
+                {
+                    <tr>
+                        <td>
+                            @DateTimeFormatInfo.CurrentInfo.GetMonthName(i)
+                        </td>
+                        <td>
+                            @Model.Payments[i].DaysWorked Days(s)
+                        </td>
+                        <td>
+                            @Model.Payments[i].DaysAbsent Days(s)
+                        </td>
+                        <td>
+                            @Model.Payments[i].DaysHolidays Days(s)
+                        </td>
+                        <td>
+                            @Model.Payments[i].NormalPay
+                        </td>
+                        <td>
+                            @Model.Payments[i].OverTimePay
+                        </td>
+                        <td>
+                            @Model.Payments[i].TotalPay
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.Employee.TaxRate) %
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "CreateUpdate", "AdminPayment", new { username = Model.Employee.UserName, month = Model.Payments[i].Month, year = Model.Payments[i].Year, paymentId = Model.Payments[i].PaymentId }, new { @class = "btn" })
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>
+                            @DateTimeFormatInfo.CurrentInfo.GetMonthName(i)
+                        </td>
+                        <td colspan="8">
+                            @Html.ActionLink("New Payment", "CreateUpdate", "AdminPayment", new { username = Model.Employee.UserName, month = i, year = Model.PaymentsYear }, new { @class = "btn" })
+                        </td>
+                    </tr>
+                }
+
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#btnUpdate").change(function () {
+                $("form").submit();
+            });
+        });
+    </script>
+}

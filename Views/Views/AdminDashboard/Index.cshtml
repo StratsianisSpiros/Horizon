@@ -1,0 +1,353 @@
+﻿@model Entities.ViewModels.DashBoardViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Dashboard";
+    int posts = Model.Posts.Count();
+}
+
+<h2 class="h2 mt-5">@ViewBag.Title</h2>
+<div class="mt-2">Company news</div>
+<hr />
+<div class="row mt-4 mb-2 ml-5">
+    <div class="col-md-4">
+        <button type="button" class="btn" data-toggle="modal" data-target="#postModal">Create a new Post</button>
+    </div>
+</div>
+<div id="contentBody">
+</div>
+
+<div id="postModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="width:100%">
+                <h4 class="modal-title font-weight-bold">New Post</h4>
+            </div>
+            <div class="modal-body p-4">
+                <form class="form-horizontal">
+                    <div class="form-group ">
+                        <textarea id="post" rows="10" class="form-control col-md-12"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-md-3 font-weight-bold">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                </div>
+                <div class="col-md-3 offset-6">
+                    <button id="btnSubmit" type="button" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="postModalUpdate" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="width:100%">
+                <h4 class="modal-title font-weight-bold">Post</h4>
+            </div>
+            <div class="modal-body p-4">
+                <form class="form-horizontal">
+                    <div class="form-group ">
+                        <textarea id="postUpdate" rows="10" class="form-control col-md-12"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div class="col-md-3 font-weight-bold">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                </div>
+                <div class="col-md-3 offset-6">
+                    <button id="btnSubmitUpdate" type="button" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="postModalDelete" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="border-color: darkred;">
+            <div class="modal-header" style="width:100%;">
+                <h4 class="modal-title font-weight-bold">You are going to delete the Post!<br /> Are you sure?</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> No</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="btnSubmitDelete" type="button" style="background-color:darkred!important;" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+
+    @* GetData we call through ajax our data and we built our html.
+        We check also if there is URL in our content and if there is we call an ajax and get data through api.     *@
+    <script>
+
+        function htmlConstructor(post) {
+
+            var htmlContainer = `<div class="container pb-lg-5" style="width:100%; background-color:white;">
+                                <div class="row border p-1">
+                                    <div>
+                                        <img src="@Url.Content(Model.LogoUrl)" width="50" height="50" alt="No image available" style="border-radius:25px;border:solid 0.1px;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h6 class="font-weight-bold">@Model.LoggedCompany</h6>
+                                        <p id ="postDate" class="font-weight-lighter" style="font-size:smaller">${post.postDate}</p>
+                                    </div>
+                                    <div class="dropdown offset-md-8 float-right" style="margin-right:14px;">
+                                        <button class="btn-dashboard p-2 fa fa-ellipsis-v"
+                                                type="button" id="dropdownMenu" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenu" id="dropdownbtns" style="background-color:#979fa6">
+                                            <div>
+                                                <button type="button" class="btn change" data-toggle="modal" data-post="${post.content}" data-postid="${post.postId}" data-target="#postModalUpdate"><i class="fa fa-pencil"></i> Edit</button>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn change" data-toggle="modal" data-postid="${post.postId}" data-target="#postModalDelete"><i class="fa fa-trash" style="color:darkred;"></i> Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row border p-4">
+                                      ${post.content}
+                                 </div>
+                                <div id="contentUrl${post.postId}"> </div>
+
+                        </div>
+                 </div>`
+
+            return htmlContainer;
+        }
+
+        function urlConstructor(post) {
+            var urlContainer = `   <div class="row border urlContainer">
+                                    <div style="width: 100%;">
+                                        <a href="${post.urlpost}">
+                                        <img id="icon${post.postId}" src="${post.urlImg}"style="width:100%;"/>
+                                        <div class="p-4" style="margin-top:-20px">
+                                        <h2 id="title${post.postId}"class="font-weight-bold">${post.urltitle}</h2>
+                                        <span id="description${post.postId}" class="font-weight-light">${post.urldescription}</span>
+                                        </div>
+                                        </a>
+                                    </div>
+                                </div>`
+
+            return urlContainer;
+        }
+
+
+
+        $(document).ready(function () {
+            var posts = [];
+            FetchPostsandRender();
+            function FetchPostsandRender() {
+                posts = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminDashboard/GetPosts",
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            posts.push({
+                                postId: v.PostId,
+                                content: v.Content,
+                                postDate: new Date(parseInt(v.PostDate.substr(6))),
+                                urlImg: "",
+                                urldescription: "",
+                                urltitle: "",
+                                urlpost: "",
+                            });
+                        });
+                        GeneratePosts(posts);
+                    },
+                    error: function (error) {
+                        alert('failed to get');
+                    }
+                })
+            }
+
+            function GeneratePosts(posts) {
+                for (var post of posts) {
+                    post.postDate = post.postDate.getDate() + "/" + (post.postDate.getMonth() + 1) + "/" + post.postDate.getFullYear() + " " + post.postDate.getHours() + ":" + post.postDate.getMinutes();
+                    detectURLs(post); // detect if there is Url in our content
+                    $('#contentBody').append(htmlConstructor(post));
+                    if (post.urlpost.length > 0) {
+                        $(`#contentUrl${post.postId}`).append(urlConstructor(post));
+                    }
+                }
+            }
+
+            function detectURLs(post) {
+                var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+                if (post.content.match(urlRegex)) {
+                    post.urlpost = post.content.match(urlRegex)[0];
+                    GetGraphs(post);
+                }
+            }
+
+            function GetGraphs(post) {
+                var url = post.urlpost; //call an external API to bring us meta data
+                var urlEncoded = encodeURIComponent(url);
+                var apiKey = 'dd4c2c1e-7db0-4f07-a502-99fb25084c13'; // <-- Replace with your app_id from https://www.opengraph.io/
+
+                var requestUrl = "https://opengraph.io/api/1.1/site/" + urlEncoded + '?app_id=' + apiKey;
+
+                if (apiKey === 'dd4c2c1e-7db0-4f07-3-99fb25084c13') {
+                    return;
+                }
+
+                $.getJSON(requestUrl, function (json) {
+
+                    // Throw the object in the console to see what it looks like!
+                    var title = '#title' + post.postId;
+                    var desciption = '#description' + post.postId;
+                    var icon = '#icon' + post.postId;
+                    $(title).text(json.hybridGraph.title);
+                    $(desciption).text(json.hybridGraph.description);
+                    $(icon).attr('src', json.hybridGraph.image);
+
+                });
+            }
+        })
+    </script>
+
+    @*SaveData*@
+    <script>
+        $('#btnSubmit').click(function () {
+            //Validation/
+            if ($('#post').val().trim() == "") {
+                alert('Request is empty');
+                return;
+            }
+            var data = {
+                Content: $('#post').val() //content -> property of request model
+            }
+            SavePost(data);
+            // call function for submit data to the server
+        })
+
+        function SavePost(data) {
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: '/AdminDashboard/Submit',
+                data: data,
+                success: function (data) {
+                    if (data.status) {
+                        //Refresh the page
+                        location.reload();
+                    }
+                },
+                error: function () {
+                    alert('Failed to save');
+                }
+            })
+        }
+
+        $('#postModal').on('show.bs.modal', function (event) {
+
+            var button = $(event.relatedTarget)
+            var modal = $(this)
+        })
+    </script>
+
+    @*UpdateData*@
+    <script>
+        var postId, postData;
+        $('#btnSubmitUpdate').click(function () {
+            //Validation/
+            if ($('#postUpdate').val().trim() == "") {
+                alert('Request is empty');
+                return;
+            }
+            var data = {
+                Content: $('#postUpdate').val(), //content -> property of request model
+                PostId: postId,
+            }
+            UpdatePost(data);
+            // call function for submit data to the server
+        });
+
+        function UpdatePost(data) {
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: '/AdminDashboard/Update',
+                data: data,
+                success: function (data) {
+                    if (data.status) {
+                        //Refresh the page
+                        location.reload();
+                    }
+                },
+                error: function () {
+                    alert('Failed to update');
+                }
+            })
+        }
+
+        $('#postModalUpdate').on('show.bs.modal', function (event) {
+
+            var button2 = $(event.relatedTarget);
+            postData = button2.data('post');
+            postId = button2.data('postid');
+            $('#postUpdate').text(postData);
+            var modal = $(this)
+        })
+    </script>
+
+    @*DeleteData*@
+    <script>
+        $('#btnSubmitDelete').click(function () {
+            var data = {
+                PostId: postId,
+            }
+            DeletePost(data);
+            // call function for submit data to the server
+        });
+
+        function DeletePost(data) {
+            $.ajax({
+                type: "POST",
+                url: '/AdminDashboard/Delete',
+                data: data,
+                success: function (data) {
+                    if (data.status) {
+                        //Refresh the page
+                        location.reload();
+                    }
+                },
+                error: function () {
+                    alert('Failed to delete');
+                }
+            })
+        }
+
+
+
+
+
+
+        $('#postModalDelete').on('show.bs.modal', function (event) {
+
+            var button2 = $(event.relatedTarget);
+            postId = button2.data('postid');
+            $('#postUpdate').text(postData);
+            var modal = $(this)
+        })
+    </script>
+
+
+
+
+}

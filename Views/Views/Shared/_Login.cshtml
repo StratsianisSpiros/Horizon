@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/FrontContent/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="bg-image" style="background-image: url('../../Content/img/sky2.jpg')"></div>
+    <div class="container body-content">
+        <div class="col-md-12 pr-0 pl-0">
+            @RenderBody()
+        </div>
+    </div>
+    <footer class="footer fixed-bottom">
+        <p>&copy; HORIZON 2021</p>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

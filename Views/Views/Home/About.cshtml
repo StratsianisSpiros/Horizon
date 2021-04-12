@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_Login.cshtml";
+    ViewBag.Title = "About us";
+}
+
+<div class="row"id="box">
+    <div class="p-5">
+        <h1 class="h1">Passion Drives us...</h1>
+        We are Passionate about Programming and we aim to share our enthusiasm and commitment at any application we construct. 
+        Our goal was to create a user-friendly application which includes everything you could ask from an ERP management tool, adding
+        our personal touch as well. 
+        <h1 class="h2 mt-5 pb-2">Meet Horizon Team</h1>
+        <div class="row mt-1">
+            <div class="col-md-3">
+                <div id="spiros" class="about-image"></div>
+                <div><b>Spiros Stratsianis</b></div>
+                <div>Full-Stack Developer</div>
+            </div>
+            <div class="col-md-3">
+                <div id="kostas" class="about-image"></div>
+                <div><b>Konstantinos Persimintzis</b></div>
+                <div>Full-Stack Developer</div>
+            </div>
+            <div class="col-md-3">
+                <div id="giannis" class="about-image"></div>
+                <div><b>Ioannis Stamatopoulos</b></div>
+                <div>Full-Stack Developer</div>
+            </div>
+            <div class="col-md-3">
+                <div id="giwrgos" class="about-image"></div>
+                <div><b>George Nafpliotis</b></div>
+                <div>Front End Developer</div>
+            </div>
+        </div>
+        <div class="pt-3">
+            <a href="@Url.Action("Login", "Home")" class="btn pull-right">Back</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

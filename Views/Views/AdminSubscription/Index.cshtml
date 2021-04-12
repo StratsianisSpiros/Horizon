@@ -1,0 +1,106 @@
+﻿@using Entities.AdminViewModels;
+@model AdminDetailsViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Subscribe";
+}
+<h1 class="h1 mt-5 ml-3">Subscription status: @Model.AdminUser.SubsciptionStatus</h1>
+<br />
+<div class="contrainer">
+    <div class="col-md-12 p-5 ml-5 mt-1">
+
+        @if (Model.AdminUser.SubsciptionStatus != "active")
+        {
+            <div class="row">
+                <div id="leftbox" class="col-md-7">
+                    <div class="box-image" style="background-image: url('../../Content/img/wood_edit.png');border-radius: 20px;">
+                        <div id="subbox">
+                            <div><u>Pro Plan includes: </u></div>
+                            <ul class="list-unstyled">
+                                <li><i class="fa fa-user-plus"></i> Umlimited Employee slots</li>
+                                <li><i class="fa fa-line-chart"></i> Manage your company without limits</li>
+                            </ul>
+                            <br />
+                            <h1>Subscribe for 10.00 &euro; per month</h1>
+                            <br />
+                            <h1>Available Payment Methods:</h1>
+                            <ul class="list-unstyled">
+                                <li><i class="fa fa-cc-visa"></i> <i class="fa fa-cc-mastercard"></i> <i class="fa fa-cc-diners-club"></i></li>
+                                <li><i class="fa fa-cc-discover"></i> <i class="fa fa-cc-jcb"></i> <i class="fa fa-google"></i></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loginbox" class="row mt-4 ml-1">
+                <section id="loginForm">
+                    <div id="Subbtn">
+                        @Html.ActionLink("Upgrade plan", "CreateSession", new { priceId = "price_1IeipfHIhuPseqDM21xFFUeJ" }, new { @class = "btn" })
+                    </div>
+                </section>
+            </div>
+        }
+        @if (Model.AdminUser.SubsciptionStatus == "active")
+        {
+            <div class="row">
+                <div id="leftbox" class="col-md-7">
+                    <div class="box-image" style="background-image: url('../../Content/img/wood.png ');border-radius: 20px;">
+                        <div id="subbox">
+                            <span>Thank you for upgrading your plan!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loginbox" class="row">
+                <div class="col-md-2 mt-5">
+                    <section id="loginForm">
+                        <div id="Subbtn">
+                            <button type="button" class="btn btn-cancel" data-toggle="modal" data-target="#unsubscribe"><i class="fa fa-trash" style="color:darkred;"></i> Cancel Subscription</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div id="unsubscribe" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="border-color: darkred;">
+            <div class="modal-header" style="width:100%;">
+                <h4 class="modal-title font-weight-bold">You are going to Unsubscribe!<br /> Are you sure?</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" class="btn m-3 col-md-6" data-dismiss="modal"><span class="fa fa-times-circle"></span> No</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="btnUnsubscribe" type="button" style="background-color:darkred!important;" class="btn m-3 col-md-6 float-right"><span class="fa fa-check-circle"></span> Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts{
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        $('#btnUnsubscribe').click(function () {
+            window.location.replace("https://localhost:44381/AdminSubscription/Unsubscribe");
+        });
+
+        $('#employeeModalDelete').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            console.log("modal");
+            var modal = $(this)
+        })
+    </script>
+
+}

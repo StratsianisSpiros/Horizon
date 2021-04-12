@@ -1,0 +1,66 @@
+﻿@model Entities.AdminViewModels.AdminDetailsViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Details";
+}
+
+<h1 class="h1 mt-5 ml-3">@ViewBag.Title</h1>
+<br />
+
+<div class="row mt-0 mr-5 ml-5">
+    <div class="col-md-10">
+        <h3 class="h3">Personal Details</h3>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.AdminUser.FirstName):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.AdminUser.FirstName)</th>
+                </tr>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.AdminUser.LastName):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.AdminUser.LastName)</th>
+                </tr>
+                <tr>
+                    <th class="">Phone Number:</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.AdminUser.PhoneNumber)</th>
+                </tr>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.AdminUser.Email):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.AdminUser.Email)</th>
+                </tr>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.AdminUser.SubsciptionStatus):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.AdminUser.SubsciptionStatus) </th>
+                </tr>
+            </tbody>
+        </table>
+        <div id="AddEmplbtn">
+            @Html.ActionLink("Edit", "UpdateUser", "", new { @class = "btn" })
+            </div>
+        </div>
+    </div>
+<br />
+<div class="row m-5">
+    <div class="col-md-10">
+        <h3 class="h3">Company Details</h3>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.Company.CompanyName) Name:</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.Company.CompanyName)</th>
+                </tr>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.Company.CompanyAddress):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.Company.CompanyAddress)</th>
+                </tr>
+                <tr>
+                    <th class="">@Html.DisplayNameFor(m => m.Company.CompanyPhone):</th>
+                    <th class="text-right">@Html.DisplayFor(m => m.Company.CompanyPhone)</th>
+                </tr>
+            </tbody>
+        </table>
+        <div id="AddEmplbtn">
+            @Html.ActionLink("Edit", "UpdateCompany", "", new { @class = "btn" })
+            </div>
+        </div>
+    </div>

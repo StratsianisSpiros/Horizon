@@ -1,0 +1,68 @@
+﻿@model Entities.EmployeeViewModels.EmloyeePaymentsViewModel
+@{
+    Layout = "~/Views/Shared/_Employee.cshtml";
+    ViewBag.Title = "Payments";
+    int index = 0;
+}
+
+<div class="h1 mt-5 ml-3">@ViewBag.Title</div>
+<div class="ml-3">Yearly payments overview</div>
+<hr />
+
+<div class="row mt-3 mb-3 ml-5">
+
+    <div class="h3 m-4">Employee @Model.Employee.FullName payments for year @Model.PaymentsYear</div>
+    @if (Model.Year.Count() > 1)
+    {
+        using (Html.BeginForm("Index", "EmployeePayment", FormMethod.Get, new { @class = "form-inline float-right" }))
+        {
+            @Html.DropDownListFor(m => m.PaymentsYear, new SelectList(Model.Year), new { @id = "btnUpdate", @class = "btn ml-3", @style = "height:40px;" })
+        }
+    }
+</div>
+
+<div class="container-fluid">
+    <div class="col-md-12 mt-0 mr-5 ml-5">
+        @for (int i = 1; i < 4; i++)
+        {
+            <div class="row">
+                @for (int j = 1; j < 5; j++)
+                {
+                    index++;
+
+                    if (Model.Payments[index].PaymentId == 0)
+                    {
+                        <a class="btn update col-md-2 m-4 p-0" style="height:100px;">
+                            <p class="requestColor" style="border-radius:20px 20px 0px 0px;">@Model.MonthNames[index - 1]</p>
+                            <p class="mt-2">No Payment</p>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("ViewPayment", "EmployeePayment", new { paymentId = Model.Payments[index].PaymentId })" class="btn update col-md-2 m-4 p-0" style="height:100px;">
+                            <p class="requestColor" style="border-radius:20px 20px 0px 0px;">@Model.MonthNames[index - 1]</p>
+                            <p class="mt-2">@Model.Payments[index].TotalPay <span>&euro;</span></p>
+                            <div>
+                                <i class="fa fa-pencil"></i>
+                                <span>
+                                    <strong>Payslip</strong>
+                                </span>
+                            </div>
+                        </a>
+                    }
+
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#btnUpdate").change(function () {
+                $("form").submit();
+            });
+        });
+    </script>
+}

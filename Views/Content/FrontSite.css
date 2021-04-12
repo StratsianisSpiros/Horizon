@@ -1,0 +1,164 @@
+﻿
+body, html {
+    font-family: -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+    line-height: 1.5;
+    font-size: 18px;
+    height: 100%;
+}
+
+.bg-image {
+    background-position: left;
+    background-repeat: no-repeat;
+    height: 100%;
+   /* filter: blur(4px);
+    -webkit-filter: blur(4px);*/
+    background-size: cover;
+}
+.body-content {
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0, 0.2); /* Black w/opacity/see-through */
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    width: 82%;
+    padding: 0;
+    text-align: center;
+    color: #f1f1f1;
+    border: 0.1px solid #f1f1f1;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 1);
+    transform: translate(-50%, -50%);
+    border-radius: 15px;
+    text-shadow: 2px 2px 4px #000000;
+}
+#title {
+    letter-spacing: 3px;
+    text-decoration: underline;
+    font-size: 58px;
+}
+
+.input-field {
+    background-color: rgba(0,0,0, 0.5) !important; /* Black w/opacity/see-through */
+    width:90%;
+    height:39px;
+    color:#f1f1f1;
+    font-size:large;
+}
+.btn {
+    background-color: rgb(1, 100, 198) !important;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    text-shadow: 2px 2px 4px #000000 !important;
+    color: #f1f1f1;
+    transition-duration: 0.7s;
+}
+    .btn:hover {
+        color: #f1f1f1;
+        filter: brightness(1.1) !important;
+    }
+#infobox {
+    height:100%;
+    text-align: left;
+    text-wrap:none;
+    padding:100px;
+    padding-top:110px;
+}
+.box-image {
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    background-size: cover;
+    filter: brightness(1);
+    border-right: 0.1px solid #f1f1f1;
+    border-radius: 15px 0px 0px 15px;
+}
+li{
+    font-size:26px;
+}
+#loginbox {
+    padding: 70px 100px 70px 100px;
+    text-wrap: none;
+}
+#box {
+    text-wrap: none;
+    background-color: rgba(0,0,0, 0.6); /* Black w/opacity/see-through */
+    border-radius:15px;
+    margin:0;
+    padding:0;
+}
+.control-label{
+    font-size:large;
+}
+.input-container .fa{
+    width:30px;
+}
+#infoboxregister {
+    height: 100%;
+    text-align: left;
+    text-wrap: none;
+    padding: 50px;
+    padding-top: 125px;
+}
+.about-image {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 250px;
+    /*   filter: blur(4px);*/
+    /*    -webkit-filter: blur(4px);*/
+    background-size: cover;
+    border-radius: 21px;
+    border: solid 2px #f1f1f1;
+    transform:tr
+}
+    .about-image:hover {
+        filter: brightness(1.1);
+    }
+
+a {
+    text-decoration: none;
+    color: #f1f1f1;
+    transition-duration: 0.9s;
+}
+    a:hover {
+        color: #f1f1f1 !important;
+        filter: brightness(1.1) !important;
+    }
+#about {
+    font-size: x-large;
+}
+#spiros {
+    background-image: url('../../Content/img/wob.png');
+    transition: 1s;
+}
+#spiros:hover {
+    background-image: url('../../Content/img/spiros.jpg');
+}
+#kostas {
+    background-position:top ;
+    background-image: url('../../Content/img/char.png');
+    transition: 1s;
+}
+
+    #kostas:hover {
+        background-image: url('../../Content/img/kostas.png');
+    }
+#giannis {
+    background-image: url('../../Content/img/toto.png');
+    transition: 1s;
+}
+
+    #giannis:hover {
+        background-image: url('../../Content/img/giannis.jpg');
+    }
+#giwrgos {
+    background-image: url('../../Content/img/5454.png');
+    transition: 1s;
+}
+
+    #giwrgos:hover {
+        background-image: url('../../Content/img/giwrgos.jpg');
+    }
+footer{
+    margin-left:5px;
+    color:#f1f1f1;
+}

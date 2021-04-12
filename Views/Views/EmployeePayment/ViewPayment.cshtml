@@ -1,0 +1,172 @@
+﻿@model Entities.ViewModels.PaymentViewModel
+@{
+    Layout = "~/Views/Shared/_Employee.cshtml";
+    decimal netTotalPay = Model.Payment.TotalPay - Model.Payment.TaxPay;
+    decimal netTotalPayYTD = Model.YearToDate.TotalPayYTD - Model.YearToDate.TaxPayYTD;
+}
+<div id="btnDiv" class="mt-2">
+    @Html.ActionLink("return", "Index", "EmployeePayment", "", new { @class = "btn m-2" })
+    <input id="printBtn" type="button" class="btn m-2" value="Print" />
+    <hr />
+</div>
+
+<div class="container fa-border" id="payslip">
+    <div class="row m-2">
+        <div class="col-md-1">
+            <img src="@Url.Content(Model.Company.LogoUrl ?? "~/CompanyLogo/Default.jpg")" width="100" height="100" alt="No image available" style="border-radius:25px;border:solid 0.1px;" />
+        </div>
+        <div class="col-md-9">
+            <div class="container">
+                <h2 class="ml-3" style="color:#2c6297;font-size:36px;font-weight:bolder;">@Model.Company.CompanyName</h2>
+                <p class="ml-3">Address: @Model.Company.CompanyAddress</p>
+                <p class="ml-3">Phone: @Model.Company.CompanyPhone</p>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <p class="text-right mr-3" style="color:#2c6297;font-size:36px;font-weight:bolder;">PAYSLIP</p>
+        </div>
+    </div>
+    <div class="row mt-4 ml-2 mr-2">
+        <div class="col-md-3">
+            <h2 style="background-color:#2c6297;color:white">EMPLOYEE INFORMATION</h2>
+            <p>@Model.Employee.FullName</p>
+            <p>Address: @Model.Employee.Address</p>
+            <p>Phone: @Model.Employee.PhoneNumber</p>
+        </div>
+        <div class="col-md-4 offset-5">
+            <table class="table table-borderless text-center">
+                <thead style="background-color:#2c6297;color:white">
+                    <tr>
+                        <th>PAY DATE</th>
+                        <th>PAY TYPE</th>
+                        <th>PERIOD </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color:#7e909a;color:#f1f1f1">
+                        <td>@Model.Payment.PayDate.Value.ToShortDateString()</td>
+                        <td>@Model.Employee.PayMethod</td>
+                        <td>@Model.Payment.PayDate.Value.Month</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-hover table-borderless text-center">
+                <thead style="background-color:#2c6297;color:white">
+                    <tr>
+                        <th colspan="2">EMPLOYEE ID</th>
+                        <th>TAX RATE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color:#7e909a;color:white">
+                        <td colspan="2">@Model.Employee.UserName</td>
+                        <td>@Model.Employee.TaxRate %</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-5 mr-2 ml-2 mb-5">
+        <div class="col-md-12">
+            <table class="table table-borderless">
+                <thead style="background-color:#2c6297;color:white">
+                    <tr>
+                        <th class="text-left" width="20%">EARNINGS</th>
+                        <th class="text-left" width="20%">HOURS</th>
+                        <th class="text-center" width="20%">RATE</th>
+                        <th class="text-right" width="20%">CURRENT</th>
+                        <th class="text-right" width="20%">YTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">Standard Pay</td>
+                        <td class="text-left">@Model.Payment.WorkHours</td>
+                        <td class="text-center">@Model.Employee.PayRate</td>
+                        <td class="text-right">@Model.Payment.NormalPay</td>
+                        <td class="text-right">@Model.YearToDate.NormalPayYTD</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Overtime Pay</td>
+                        <td class="text-left">@Model.Payment.OverTimeHours</td>
+                        <td class="text-center">@Model.Employee.OverTimeRate</td>
+                        <td class="text-right">@Model.Payment.OverTimePay</td>
+                        <td class="text-right">@Model.YearToDate.OverTimePayYTD</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Holiday Pay</td>
+                        <td class="text-left">@Model.Payment.HolidayHours</td>
+                        <td class="text-center">@Model.Employee.PayRate</td>
+                        <td class="text-right">@Model.Payment.HolidayPay</td>
+                        <td class="text-right">@Model.YearToDate.HolidayPayYTD</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" colspan="5">-</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" colspan="5">-</td>
+                    </tr>
+                    <tr style="background-color:#7e909a;color:white">
+                        <td class="text-left" colspan="3">GROSS PAY</td>
+                        <td class="text-right">@Model.Payment.TotalPay</td>
+                        <td class="text-right">@Model.YearToDate.TotalPayYTD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-5 mr-2 ml-2 mb-5">
+        <div class="col-md-12">
+            <table class="table table-borderless">
+                <thead style="background-color:#2c6297;color:white">
+                    <tr>
+                        <th class="text-left" width="20%">DEDUCTIONS</th>
+                        <th class="text-left" width="20%"></th>
+                        <th class="text-left" width="20%"></th>
+                        <th class="text-right" width="20%">CURRENT</th>
+                        <th class="text-right" width="20%">YTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color:#7e909a;color:white">
+                        <td class="text-left" colspan="3" width="60%">Tax Pay</td>
+                        <td class="text-right" width="20%">@Model.Payment.TaxPay</td>
+                        <td class="text-right" width="20%">@Model.YearToDate.TaxPayYTD</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" colspan="5">-</td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" colspan="5">-</td>
+                    </tr>
+                    <tr style="background-color:#7e909a;color:white">
+                        <td class="text-left" width="60%" colspan="3">NET PAY</td>
+                        <td class="text-right" width="20%">@netTotalPay</td>
+                        <td class="text-right" width="20%">@netTotalPayYTD</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            function TogglePrint() {
+                $("#wrapper").toggleClass("toggled");
+                icon = $("#menu-toggle").find("i");
+                icon.toggleClass("fa-arrow-circle-right fa-arrow-circle-left")
+                $("#btnDiv").toggle();
+            }
+
+            $("#printBtn").click(function () {
+                TogglePrint();              
+                window.print();
+                TogglePrint();
+            })
+        })
+    </script>
+}

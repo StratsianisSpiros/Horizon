@@ -1,0 +1,62 @@
+﻿@model Entities.ViewModels.LoginViewModel
+@{
+    Layout = "~/Views/Shared/_Login.cshtml";
+    ViewBag.Title = "Log in";
+}
+
+<div class="row p-0 m-0">
+    <div class="col-md-6 p-0">
+        <div class="box-image" style="background-image: url('../../Content/img/wood.png')">
+            <div id="infobox" class="">
+                <div id="title">Horizon</div>
+                <ul class="list-unstyled mt-4">
+                    <li><i class="fa fa-user"></i> Human Recources</li>
+                    <li><i class="fa fa-dollar"></i> Finance & Accounting</li>
+                    <li><i class="fa fa-calendar-check-o"></i> Shcedule Planing</li>
+                    <li><i class="fa fa-bar-chart"></i> Chart Reports</li>
+                </ul>
+                <br />
+                <div id="about"><i class="fa fa-info"></i>@Html.ActionLink(" About Us", "About")</div>
+            </div>
+        </div>
+    </div>
+    <div id="loginbox" class="col-md-6">
+        <section id="loginForm">
+            @using (Html.BeginForm("Login", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <h2>WELCOME</h2>
+                <br />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                    <div class="input-container">
+                        <i class="fa fa-envelope icon" style="font-size: larger;"></i>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "input-field" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+                    <div class="input-container">
+                        <i class="fa fa-lock icon" style="font-size: x-large;"></i>
+                        @Html.PasswordFor(m => m.Password, new { @class = "input-field"})
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="">
+                        <input type="submit" value="LOGIN" class="btn btn-default" />
+                    </div>
+                </div>
+                <p>
+                    @Html.ActionLink("Register as a new user", "Register")
+                </p>
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

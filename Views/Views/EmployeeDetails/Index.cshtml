@@ -1,0 +1,53 @@
+﻿@model Entities.EmployeeViewModels.EmployeeUploadAvatar
+@{
+    Layout = "~/Views/Shared/_Employee.cshtml";
+    ViewBag.Title = "Details";
+}
+
+<h1 class="h1 mt-5 ml-3">Personal @ViewBag.Title</h1>
+<br />
+
+<div class="row mt-0 mr-5 ml-5">
+    <div class="col-md-10">
+        <img src="@Url.Content(Model.Employee.AvatarUrl)" width="130" height="130" alt="No image available" style="border-radius:20px;" class="pull-right mb-3" />
+        @using (Html.BeginForm("UploadAvatar", "EmployeeDetails", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th class="">@Html.DisplayNameFor(m => m.Employee.UserName):</th>
+                        <th class="text-right">@Html.DisplayFor(m => m.Employee.UserName)</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.DisplayNameFor(m => m.Employee.FirstName):</th>
+                        <th class="text-right">@Html.DisplayFor(m => m.Employee.FirstName)</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.DisplayNameFor(m => m.Employee.LastName):</th>
+                        <th class="text-right">@Html.DisplayFor(m => m.Employee.LastName)</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.DisplayNameFor(m => m.Employee.Address):</th>
+                        <th class="text-right">@Html.DisplayFor(m => m.Employee.Address)</th>
+                    </tr>
+                    <tr>
+                        <th class="">@Html.DisplayNameFor(m => m.Employee.HireDate):</th>
+                        <th class="text-right">@Html.DisplayFor(m => m.Employee.HireDate) </th>
+                    </tr>
+                    <tr>
+                        <th class="">Picture:</th>
+
+                        @Html.AntiForgeryToken()
+                        <th class="text-right">
+                            @Html.ValidationSummary()
+                            @Html.TextBoxFor(m => m.UploadFile, new { type = "file" })
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="AddEmplbtn" class="mt-4" title="Upload photo">
+                <input type="submit" class="btn pull-right" value="Upload" />
+            </div>
+        }
+    </div>
+</div>

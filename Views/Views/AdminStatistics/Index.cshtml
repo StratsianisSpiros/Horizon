@@ -1,0 +1,178 @@
+﻿@model Entities.AdminViewModels.AdminStatisticsViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Overview Statistics";
+}
+
+<div class="h1 mt-5 ml-3">@ViewBag.Title</div>
+<div class="ml-3">Current month overview statistics</div>
+<hr />
+<div class="row mt-2 mb-2 ml-3">
+    <div class="col-md-1">
+        @Html.ActionLink("Company", "CompanyStatistics", null, new { @class = "btn" })
+    </div>
+    <div class="col-md-6 text-left">
+        @Html.ActionLink("Employees", "EmployeeStatistics", null, new { @class = "btn" })
+    </div>
+</div>
+<hr />
+<div class="row mt-5 mr-2 ml-2">
+    <div class="col-md-6">
+        <p class="h5 text-center mb-3 charthead">Overview of monthly payments and an estimate of current month</p>
+        <canvas id="myChart2"></canvas>
+    </div>
+    <div class="col-md-6">
+        <p class="h5 text-center mb-3 charthead">Overview of employees monthly payment and current month estimate</p>
+        <canvas id="myChart"></canvas>
+        <div class="container mt-5">
+                Month :
+                <select id="optMonth" class="btn">
+                    @foreach (var item in Model.Month)
+                    {
+                        if (item == DateTime.Now.Month)
+                        {
+                            <option value="@item" selected>@item</option>
+                        }
+                        else
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    }
+                </select>   
+                Year :
+                <select id="optYear" class="btn">
+                    @foreach (var item in Model.Year)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select> 
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            var myChart;
+            var myChart2;
+            var ctx = document.getElementById("myChart").getContext('2d');
+            var ctx2 = document.getElementById("myChart2").getContext('2d');
+
+            MonthPaymentChart();
+            YearPaymentChart();
+
+            function MonthPaymentChart() {
+                EmployeesNames = [];
+                EmployeesSalary = [];
+                month = $('#optMonth').val();
+                year = $('#optYear').val();
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminStatistics/MonthlyPayment?month=" + month + '&year=' + year,
+                }).done(function (data) {
+                    EmployeesNames = data.EmployeesNames;
+                    EmployeesSalary = data.EmployeesSalary.map(x => x.TotalPay.toFixed(2));
+
+                    myChart = new Chart(ctx,
+                        {
+                            type: 'bar',
+                            data: {
+                                fillOpacity: 1,
+                                labels: EmployeesNames,
+                                datasets: [
+                                    {
+                                        pointHoverBorderColor: ['rgba(46,179,152, 0.6)'],
+                                        label: 'Month Salary',
+                                        data: EmployeesSalary,
+                                        backgroundColor: "rgb(44, 90, 120,0.8)",                                
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true,
+                                        }
+                                    }],
+                                    xAxes: [{
+                                        ticks: {
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                });
+            };
+
+            function YearPaymentChart() {
+                TotalYearPay = [];
+                NormalyearPay = [];
+                OverTimeYearPay = [];
+                MonthNames = [];
+
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminStatistics/CurrentYearPayments",
+                }).done(function (data) {
+                    TotalYearPay = data.YearTotalPayments;
+                    NormalyearPay = data.YearNormalPayments;
+                    OverTimeYearPay = data.YearOverTimePayments;
+                    MonthNames = data.MonthNames;
+                    MonthNames.pop();
+                    myChart2 = new Chart(ctx2,
+                        {
+                            type: 'line',
+                            data: {
+                                labels: MonthNames,
+                                datasets: [
+                                    {
+                                        label: 'Overtime Pay',
+                                        fill: true,
+                                        lineTension: 0.1,
+                                        data: OverTimeYearPay,
+                                        backgroundColor: "rgb(219, 76, 59,0.8)",
+                                        borderColor: "rgb(219, 76, 59,1)",
+                                        borderWidth: 2
+                                    }, {
+                                        label: 'Total Pay',
+                                        fill: true,
+                                        borderJoinStyle: 'miter',
+                                        lineTension: 0.1,
+                                        data: TotalYearPay,
+                                        backgroundColor: 'rgb(46, 155, 159, 0.5)',
+                                        borderColor: 'rgb(46, 155, 159, 1)',
+                                        borderWidth: 2
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                        ticks: {
+                                            beginAtZero: true
+                                        }
+                                    }]
+                                }
+                            }
+                        });
+                });
+            };
+
+            $("#optMonth").change(function () {
+                myChart.destroy();
+                MonthPaymentChart();
+            });
+
+            $("#optYear").change(function () {
+                myChart.destroy();
+                MonthPaymentChart();
+            });
+
+        });
+    </script>
+}

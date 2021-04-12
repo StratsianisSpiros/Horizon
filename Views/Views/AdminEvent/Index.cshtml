@@ -1,0 +1,314 @@
+﻿@model Entities.AdminViewModels.AdminIndexViewModel
+@{
+    Layout = "~/Views/Shared/_Admin.cshtml";
+    ViewBag.Title = "Company Schedule";
+}
+<div class="h1 mt-5 ml-3">@ViewBag.Title</div>
+<div class="ml-3">Schedule your employee work and shifts</div>
+<hr />
+<div id="calender" class="m-3"></div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="font-weight:bold">Employee ID: <span style="font-weight:normal" id="eventTitle"></span></h4>
+            </div>
+            <div>
+                <div class="modal-body">
+                    <p id="pDetails"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelete" class="btn btn-default pull-left">
+                    <span class="fa fa-trash"></span> Remove
+                </button>
+                <button id="btnEdit" class="btn btn-default pull-left" style="margin-right:5px;">
+                    <span class="fa fa-edit"></span> Edit
+                </button>
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal"><span class="fa fa-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalSave" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height:700px;width:410px;border:0;">
+            <div class="modal-header" style="width:100%">
+                <h4 class="modal-title" style="color:#f1f1f1;font-weight:bold">Save Shift</h4>
+            </div>
+            <div class="modal-body">
+                <form class="col-md-12 form-horizontal">
+                    <input type="hidden" id="hdEventID" value="0" />
+                    <div class="form-group">
+                        <label>Employee</label>
+                        <select id="txtSubject" class="form-control">
+                            <option hidden selected value="">Select Employee</option>
+                            @foreach (var item in Model.Employees)
+                            {
+                                <option value="@item.UserName">@item.FullName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Start</label>
+                        <div class="input-group date" id="dtp1">
+                            <input type="text" id="txtStart" class="form-control" />
+
+                            <span id="calendaricon" class="input-group-addon">
+                                <i class="fa fa-calendar-minus-o"></i>
+                            </span>
+
+                        </div>
+                    </div>
+                    <div class="form-group" id="divEndDate" @*style="display:none"*@>
+                        <label>End</label>
+                        <div class="input-group date" id="dtp2">
+                            <input type="text" id="txtEnd" class="form-control" />
+                            <span id="calendaricon" class="input-group-addon">
+                                <i class="fa fa-calendar-minus-o"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Overtime hours</label>
+                        <input type="number" id="txtovertime" class="form-control" placeholder="0" min="0" max="12" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="txtDescription" rows="3" maxlength="90" class="form-control" style="resize: none;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Work Status</label>
+                        <select id="ddWorkStatus" class="form-control">
+                            <option hidden selected value="">Select Wort Status</option>
+                            @foreach (var item in Model.StatusColors)
+                            {
+                                <option value="@item.Color">@item.Status</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 pl-0">
+                            <button type="button" class="btn m-3 col-md-9" data-dismiss="modal"><span class="fa fa-times-circle"></span> Close</button>
+                        </div>
+                        <div class="col-md-6 pl-0">
+                            <button id="btnSubmit" type="button" class="btn m-3 col-md-9"><span class="fa fa-check-circle"></span> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var events = [];
+            var selectedEvent = null;
+            FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/AdminEvent/GetEvents",
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                eventID: v.EventID,
+                                CompanyID: v.CompanyID,
+                                Username: v.Username,
+                                title: v.Username,
+                                Overtime: v.Overtime,
+                                description: v.Description,
+                                start: moment(v.Start),
+                                end: v.End != null ? moment(v.End) : null,
+                                color: v.Color,
+                                allDay: v.IsFullDay
+                            });
+                        })
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        alert('failed to get');
+                    }
+                })
+            }
+            function GenerateCalender(events) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                    contentHeight: 600,
+                    defaultDate: new Date(),
+                    timeFormat: 'h(:mm)a',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay,agenda'
+                    },
+                    eventLimit: true,
+                    eventColor: '#f1f1f1',
+                    events: events,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
+                        $('#myModal #eventTitle').text(calEvent.Username);
+                        var $description = $('<div/>');
+
+                        $description.append($('<p/>').html('<b style="font-weight:bold;color:black;">Start:</b> ' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b style="font-weight:bold;color:black;">End:</b>  ' + calEvent.end.format("DD-MMM-YYYY HH:mm a")));
+
+                        }
+                        $description.append($('<p/>').html('<b style="font-weight:bold;color:black;">Description:</b> ' + calEvent.description));
+                        $('#myModal #pDetails').empty().html($description);
+                        $('#myModal').modal();
+                    },
+                    selectable: true,
+                    select: function (start, end) {
+                        selectedEvent = {
+                            eventID: 0,
+                            title: '',
+                            description: '',
+                            overtime: 0,
+                            start: start,
+                            end: end,
+                            allDay: false,
+                            color: ''
+                        };
+                        openAddEditForm();
+                        $('#calendar').fullCalendar('unselect');
+                    },
+                    editable: true,
+                    eventDrop: function (event) {
+                        var data = {
+                            EventID: event.eventID,
+                            Username: event.Username,
+                            Overtime: event.overtime,
+                            Start: event.start.format('DD/MM/YYYY HH:mm A'),
+                            End: event.end != null ? event.end.format('DD/MM/YYYY HH:mm A') : null,
+                            Description: event.description,
+                            Color: event.color,
+                            IsFullDay: event.allDay
+                        };
+                        SaveEvent(data);
+                    }
+                })
+            }
+            $('#btnEdit').click(function () {
+                //Open modal dialog for edit event
+                openAddEditForm();
+            })
+            $('#btnDelete').click(function () {
+                if (selectedEvent != null && confirm('Are you sure?')) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/AdminEvent/DeleteEvent',
+                        data: { 'eventID': selectedEvent.eventID },
+                        success: function (data) {
+                            if (data.status) {
+                                //Refresh the calender
+                                FetchEventAndRenderCalendar();
+                                $('#myModal').modal('hide');
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to delete');
+                        }
+                    })
+                }
+            })
+            $('#dtp1,#dtp2').datetimepicker({
+                format: 'DD/MM/YYYY HH:mm A'
+            });
+            //$('#chkIsFullDay').change(function () {
+            //    if ($(this).is(':checked')) {
+            //        $('#divEndDate').hide();
+            //    }
+            //    else {
+            //        $('#divEndDate').show();
+            //    }
+            //});
+            function openAddEditForm() {
+                if (selectedEvent != null) {
+                    $('#hdEventID').val(selectedEvent.eventID);
+                    $('#txtSubject').val(selectedEvent.Username);
+                    $('#txtovertime').val(selectedEvent.Overtime);
+                    $('#txtStart').val(selectedEvent.start.format('DD/MM/YYYY HH:mm A'));
+                    $('#chkIsFullDay').prop("checked", selectedEvent.allDay || false);
+                    $('#chkIsFullDay').change();
+                    $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD/MM/YYYY HH:mm A') : '');
+                    $('#txtDescription').val(selectedEvent.description);
+                    $('#ddWorkStatus').val(selectedEvent.color);
+                }
+                $('#myModal').modal('hide');
+                $('#myModalSave').modal();
+            }
+            $('#btnSave').click(function () {
+                //Validation/
+                if ($('#txtSubject').val().trim() == "") {
+                    alert('You must choose an Employee');
+                    return;
+                }
+                if ($('#txtStart').val().trim() == "") {
+                    alert('Start date required');
+                    return;
+                }
+                if ($('#chkIsFullDay').is(':checked') == false && $('#txtEnd').val().trim() == "") {
+                    alert('End date required');
+                    return;
+                }
+                if ($('#ddWorkStatus').val().trim() == "") {
+                    alert('You must choose a Work Status');
+                    return;
+                }
+                else {
+                    var startDate = moment($('#txtStart').val(), "DD/MM/YYYY HH:mm A").toDate();
+                    var endDate = moment($('#txtEnd').val(), "DD/MM/YYYY HH:mm A").toDate();
+                    if (startDate > endDate) {
+                        alert('Invalid end date');
+                        return;
+                    }
+                }
+                var data = {
+                    EventID: $('#hdEventID').val(),
+                    Username: $('#txtSubject').val().trim(),
+                    Overtime: $('#txtovertime').val(),
+                    Start: $('#txtStart').val().trim(),
+                    End: $('#chkIsFullDay').is(':checked') ? null : $('#txtEnd').val().trim(),
+                    Description: $('#txtDescription').val(),
+                    Color: $('#ddWorkStatus').val(),
+                    IsFullDay: $('#chkIsFullDay').is(':checked')
+                }
+                SaveEvent(data);
+                // call function for submit data to the server
+            })
+            function SaveEvent(data) {
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: '/AdminEvent/SaveEvent',
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to save');
+                    }
+                })
+            }
+        })
+    </script>
+}
