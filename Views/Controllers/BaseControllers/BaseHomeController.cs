@@ -10,6 +10,7 @@ namespace Views.Controllers.BaseControllers
     /// Base Controller for login page and exposes repositories required <br/>
     /// for registering kai login
     /// </summary>
+    [AllowAnonymous]
     public class BaseHomeController : Controller
     {
         // GET: BaseHome

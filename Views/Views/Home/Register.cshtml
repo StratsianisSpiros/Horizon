@@ -35,21 +35,21 @@
                 <hr />
                 @Html.ValidationSummary("", new { @class = "text-danger" })
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Email, new { @class = " control-label" })
+                    @Html.LabelFor(m => m.Email, new { @class = "control-label" })
                     <div class="input-container">
                         <i class="fa fa-envelope icon" style="font-size: larger;"></i>
                         @Html.TextBoxFor(m => m.Email, new { @class = "input-field" })
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Password, new { @class = " control-label" })
+                    @Html.LabelFor(m => m.Password, new { @class = "control-label" })
                     <div class="input-container">
                         <i class="fa fa-lock icon" style="font-size: x-large;"></i>
                         @Html.PasswordFor(m => m.Password, new { @class = "input-field" })
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = " control-label" })
+                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label" })
                     <div class="input-container">
                         <i class="fa fa-lock icon" style="font-size: x-large;"></i>
                         @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "input-field" })
@@ -61,12 +61,12 @@
                         <i class="fa fa-industry" style="font-size: x-large;"></i>
                         @Html.TextBoxFor(m => m.CompanyName, new { @class = "input-field" })
                     </div>
+                </div>        
+                <div class="pt-3">
+                    <input type="submit" class="btn pull-right" value="Register" />
+                    <a href="@Url.Action("Login", "Home")" class="btn pull-left">Back</a>  
                 </div>
-            }
-        <div class="pt-3">
-                <input type="submit" class="btn pull-right" value="Register" />
-                <a href="@Url.Action("Login", "Home")" class="btn pull-left">Back</a>  
-        </div>
+             }
         </section>
     </div>
 </div>

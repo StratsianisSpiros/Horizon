@@ -30,8 +30,8 @@ namespace Repositories.Services
                 },
 
                 Mode = "subscription",
-                SuccessUrl = "https://localhost:44381/AdminSubscription/Success?session_id={CHECKOUT_SESSION_ID}", //websit,stripe will redirect to this
-                CancelUrl = "https://localhost:44381/AdminSubscription/Index",
+                SuccessUrl = "https://localhost:44309/AdminSubscription/Success?session_id={CHECKOUT_SESSION_ID}", //websit,stripe will redirect to this
+                CancelUrl = "https://localhost:44309/AdminSubscription/Index",
             };
             var service = new SessionService();
             Session session = service.Create(options);
