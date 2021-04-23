@@ -40,5 +40,6 @@ password: !23admiN
 
 All dummy comopany employee's logins have the same username and password, which can be found at the Employee tab.
 For example Employee login credentials:
-username: Beauvoir
-password: Beauvoir
+
+- username: Beauvoir
+- password: Beauvoir
