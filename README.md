@@ -26,7 +26,7 @@ https://www.dropbox.com/sh/djigo3qdvlulxmx/AABiQHFl6-TnT00gwdiWvqnXa?dl=0
 - Stripe
 
 ### How to install
-1. Clone repository from https://github.com/JohnStamDev/Horizon link or download the zip file
+1. Clone repository from  link https://github.com/StratsianisSpiros/Horizon or download the zip file
 2. Open as a folder in Visual Studio
 3. On the solution file right click and select the open option in order to open the solution
 4. Rebuild project (or on solution project file right click and select restore all nuget packages)
